@@ -55,7 +55,25 @@ def write_xml_anno(true_labels):
     return 0
 # ------------------------
 
+# 4. SOBEL EDGE CALCULATION
+def gaussian_kernel(size, sigma=1):
+    size = int(size) // 2
+    x, y = np.mgrid[-size:size+1, -size:size+1]
+    normal = 1 / (2.0 * np.pi * sigma**2)
+    g =  np.exp(-((x**2 + y**2) / (2.0*sigma**2))) * normal
+    return g
 
+def edgeness(img):
+    sobel_horizontal = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
+    sobel_vertical = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
+
+    absx= cv2.convertScaleAbs(sobel_horizontal)
+    absy = cv2.convertScaleAbs(sobel_vertical)
+
+    edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
+    
+    return edge
+# ------------------------
 
 
 
