@@ -75,7 +75,11 @@ def edgeness(img):
     return edge
 # ------------------------
 
-
+# Write Text
+text_file = open("aug_data_names.txt", "w+")
+for i in range(len(sub_img_src)//4):
+    print(sub_img_names[4*i] + "_stack", file=text_file)
+text_file.close()
 
 
 
