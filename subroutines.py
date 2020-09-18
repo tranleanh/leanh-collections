@@ -81,7 +81,16 @@ for i in range(len(sub_img_src)//4):
     print(sub_img_names[4*i] + "_stack", file=text_file)
 text_file.close()
 
-
+# 5 Remove array from List
+def remove_element(L,arr):
+    ind = 0
+    size = len(L)
+    while ind != size and not np.array_equal(L[ind],arr):
+        ind += 1
+    if ind != size:
+        L.pop(ind)
+    else:
+        raise ValueError('array not found in list.')
 
 
 
