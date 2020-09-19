@@ -1,0 +1,12 @@
+#================================================================
+#
+#   Copyright (C) 2020 Tran Le Anh
+#
+#   Editor      : Sublime Text
+#   Application : Centroid Neural Network
+#   Author      : tranleanh
+#   Created date: 2020-09-19 18:00
+#   Description : Public
+#   Version     : 1.0
+#
+#================================================================
