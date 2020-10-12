@@ -123,5 +123,12 @@ def nms(dets, thresh):
 
     return keep
 
-
+# Copy-Paste File
+dst_dir = "./waymo/waymo_20per"
+i=0
+for name in waymo_20per_names:
+    filepath = f"../datasets/waymo/data/train/{name}.jpg"
+    shutil.copy(filepath, dst_dir)
+    i+=1
+    print(i, len(waymo_20per_names))
 
