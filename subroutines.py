@@ -175,3 +175,61 @@ def wbb(dets, thresh):
     return wbbs
     
     return [int(out_x1), int(out_y1), int(out_x2), int(out_y2), max_score]
+
+
+def calc_iou(gt_bbox, pred_bbox):
+    '''
+    This function takes the predicted bounding box and ground truth bounding box and 
+    return the IoU ratio
+    '''
+    x_topleft_gt, y_topleft_gt, x_bottomright_gt, y_bottomright_gt = gt_bbox
+    x_topleft_p, y_topleft_p, x_bottomright_p, y_bottomright_p = pred_bbox
+    
+    if (x_topleft_gt > x_bottomright_gt) or (y_topleft_gt > y_bottomright_gt):
+        raise AssertionError("Ground Truth Bounding Box is not correct")
+    if (x_topleft_p > x_bottomright_p) or (y_topleft_p > y_bottomright_p):
+        raise AssertionError("Predicted Bounding Box is not correct")
+        
+    #if the GT bbox and predcited BBox do not overlap then iou=0
+    if(x_bottomright_gt < x_topleft_p):      
+        return 0.0
+    if(y_bottomright_gt < y_topleft_p):        
+        return 0.0
+    if(x_topleft_gt > x_bottomright_p):      
+        return 0.0
+    if(y_topleft_gt > y_bottomright_p):
+        return 0.0
+    
+    GT_bbox_area = (x_bottomright_gt - x_topleft_gt + 1) * (y_bottomright_gt - y_topleft_gt + 1)
+    Pred_bbox_area = (x_bottomright_p - x_topleft_p + 1 ) * (y_bottomright_p - y_topleft_p + 1)
+    
+    x_top_left = np.max([x_topleft_gt, x_topleft_p])
+    y_top_left = np.max([y_topleft_gt, y_topleft_p])
+    x_bottom_right = np.min([x_bottomright_gt, x_bottomright_p])
+    y_bottom_right = np.min([y_bottomright_gt, y_bottomright_p])
+    
+    intersection_area = (x_bottom_right - x_top_left + 1) * (y_bottom_right - y_top_left  + 1)
+    
+    union_area = (GT_bbox_area + Pred_bbox_area - intersection_area)
+   
+    return intersection_area/union_area
+
+
+def process_single_image_results(gt_boxes, pred_boxes, iou_thr):
+
+    detected_obj_boxes = []
+
+    if len(pred_boxes) > 0 and len(gt_boxes) > 0:
+    
+        gt_idx_thr=[]
+        pred_idx_thr=[]
+        ious=[]
+
+        for igb, gt_box in enumerate(gt_boxes):
+            for ipb, pred_box in enumerate(pred_boxes):
+                iou = calc_iou(gt_box, pred_box)
+
+                if iou >= iou_thr:
+                    detected_obj_boxes.append(gt_box)
+    
+    return detected_obj_boxes
