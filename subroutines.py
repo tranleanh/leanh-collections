@@ -132,3 +132,46 @@ for name in waymo_20per_names:
     i+=1
     print(i, len(waymo_20per_names))
 
+# Weighted Bounding Box
+def weighted_coors(boxes):
+    '''
+    boxes = [x1, y1, x2, y2, score]
+    '''
+    boxes = np.array(boxes)
+    max_score = np.amax(boxes[:,4])
+    sum_score = sum(boxes[:,4])
+    out_x1 = sum(boxes[:,0]*boxes[:,4])/sum_score
+    out_y1 = sum(boxes[:,1]*boxes[:,4])/sum_score
+    out_x2 = sum(boxes[:,2]*boxes[:,4])/sum_score
+    out_y2 = sum(boxes[:,3]*boxes[:,4])/sum_score
+
+def wbb(dets, thresh):
+    boxes = dets
+    boxes = np.array(boxes)
+    wbbs = []
+
+    while len(boxes) > 0:
+        boxes = np.array(boxes)
+
+        scores = boxes[:,4]
+        order = scores.argsort()[::-1]
+
+        anchor = boxes[order[0]]
+        one_group = []
+        one_group.append(anchor)
+
+        new_boxes = []
+
+        for i in range(len(order)-1):
+            test_box = boxes[order[i+1]]
+            iou = calc_iou(anchor[0:4], test_box[0:4])
+            if iou >= thresh: one_group.append(test_box)
+            else: new_boxes.append(test_box)
+
+        boxes = new_boxes    
+        average_box = weighted_coors(one_group)
+        wbbs.append(average_box)
+
+    return wbbs
+    
+    return [int(out_x1), int(out_y1), int(out_x2), int(out_y2), max_score]
