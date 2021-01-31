@@ -233,3 +233,24 @@ def process_single_image_results(gt_boxes, pred_boxes, iou_thr):
                     detected_obj_boxes.append(gt_box)
     
     return detected_obj_boxes
+
+
+def sobel_edges(img):  
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    x = cv2.Sobel(gray, cv2.CV_16S, 1,0, ksize=3, scale=1)
+    y = cv2.Sobel(gray, cv2.CV_16S, 0,1, ksize=3, scale=1)
+    absx= cv2.convertScaleAbs(x)
+    absy = cv2.convertScaleAbs(y)
+    edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
+    return edge
+
+def sobel_edges_gaublur(img, filter_size = (5,5)):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gau_img = cv2.GaussianBlur(gray,filter_size,0)
+    x = cv2.Sobel(gau_img, cv2.CV_16S, 1,0, ksize=3, scale=1)
+    y = cv2.Sobel(gau_img, cv2.CV_16S, 0,1, ksize=3, scale=1)
+    absx= cv2.convertScaleAbs(x)
+    absy = cv2.convertScaleAbs(y)
+    edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
+    return edge
+
