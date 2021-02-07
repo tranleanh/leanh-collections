@@ -254,3 +254,6 @@ def sobel_edges_gaublur(img, filter_size = (5,5)):
     edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
     return edge
 
+
+# Display Plot Title
+plt.gca().set_title("image")
