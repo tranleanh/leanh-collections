@@ -4,6 +4,16 @@
 #     USEFUL FUNCTIONS    #     
 # ----------------------- #
 
+##### IMPORT #####
+import os
+import glob
+import cv2
+import numpy as np
+import random
+from matplotlib import pyplot as plt
+##################
+
+
 # 1. READ TXT FILE TO LIST
 def file_lines_to_list(path):
     # open txt file lines to a list
