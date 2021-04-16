@@ -31,6 +31,30 @@ def get_file_name(path):
     return onlyname
 # ------------------------
 
+
+# 4. CLUSTERING ACCURACY
+def clustering_acc(y_true, y_pred):
+    """
+    Calculate clustering accuracy. Require scikit-learn installed
+    # Arguments
+        y: true labels, numpy.array with shape `(n_samples,)`
+        y_pred: predicted labels, numpy.array with shape `(n_samples,)`
+    # Return
+        accuracy, in [0,1]
+    """
+    y_true = y_true.astype(np.int64)
+    y_pred = y_pred.astype(np.int64)
+    if len(y_true) != len(y_pred):
+        raise ValueError("Prediction and Label are not in a same size!!!")
+    else:
+        cm = sklearn.metrics.confusion_matrix(y_true, y_pred)
+        true_cases = 0
+        for infor in cm:
+            true_cases += np.amax(infor)
+    return true_cases / len(y_true)
+# ------------------------
+
+
 # 3. WRITE XML ANNOTATION FILE
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
