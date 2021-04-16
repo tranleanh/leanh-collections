@@ -257,3 +257,10 @@ def sobel_edges_gaublur(img, filter_size = (5,5)):
 
 # Display Plot Title
 plt.gca().set_title("image")
+
+
+# K-Means
+from sklearn.cluster import KMeans
+kmeans = KMeans(n_clusters=6)
+kmeans.fit(box_sizes_array)
+print(kmeans.cluster_centers_)
