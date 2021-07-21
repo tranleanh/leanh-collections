@@ -309,3 +309,21 @@ print(kmeans.cluster_centers_)
     else:
         h = 1280
         # print(img_name, h)
+        
+
+# Post-process Segmentation
+def post_process(img):
+    r = img[:,:,0]
+    g = img[:,:,1]
+    b = img[:,:,2]
+    
+    ret, r_thr = cv2.threshold(r, 120, 255, cv2.THRESH_BINARY)
+    ret, g_thr = cv2.threshold(g, 120, 255, cv2.THRESH_BINARY)
+    ret, b_thr = cv2.threshold(b, 120, 255, cv2.THRESH_BINARY)
+    
+    rgbArray = np.zeros(img.shape, 'uint8')
+    rgbArray[..., 0] = r_thr
+    rgbArray[..., 1] = g_thr
+    rgbArray[..., 2] = b_thr
+    
+    return rgbArray
