@@ -327,3 +327,7 @@ def post_process(img):
     rgbArray[..., 2] = b_thr
     
     return rgbArray
+
+
+if not os.path.isdir(detection_result_dir):
+    os.makedirs(detection_result_dir)
