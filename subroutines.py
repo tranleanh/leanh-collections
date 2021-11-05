@@ -331,3 +331,8 @@ def post_process(img):
 
 if not os.path.isdir(detection_result_dir):
     os.makedirs(detection_result_dir)
+
+    
+### Sort Array
+array_x[array_x[:, 1].argsort()[::-1]]    # highest to lowest
+array_x[array_x[:, 1].argsort()]          # lowest to highest
