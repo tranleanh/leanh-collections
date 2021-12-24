@@ -329,6 +329,7 @@ def post_process(img):
     return rgbArray
 
 
+# Check a folder
 if not os.path.isdir(detection_result_dir):
     os.makedirs(detection_result_dir)
 
@@ -336,3 +337,14 @@ if not os.path.isdir(detection_result_dir):
 ### Sort Array
 array_x[array_x[:, 1].argsort()[::-1]]    # highest to lowest
 array_x[array_x[:, 1].argsort()]          # lowest to highest
+
+
+
+# 1-channel Image to 3-channel Image
+img = cv2.imread("D:\\img.jpg")
+gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
+
+img2 = np.zeros_like(img)
+img2[:,:,0] = gray
+img2[:,:,1] = gray
+img2[:,:,2] = gray
