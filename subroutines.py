@@ -302,13 +302,9 @@ print(kmeans.cluster_centers_)
 
 
 # WAYMO Size process:
-    if img_name[name_len-10:name_len-6] == "SIDE" or img_name[name_len-9:name_len-5] == "SIDE":
-        h = 886
-        # print(img_name, h)
-        
-    else:
-        h = 1280
-        # print(img_name, h)
+    if img_name[name_len-10:name_len-6] == "SIDE" or img_name[name_len-9:name_len-5] == "SIDE": h = 886
+    else: h = 1280
+    w = 1920
         
 
 # Post-process Segmentation
