@@ -167,6 +167,45 @@ for name in waymo_20per_names:
     print(i, len(waymo_20per_names))
 
 # Weighted Bounding Box
+# Weighted Bounding Box
+
+def calc_iou(bbox1, bbox2):
+    '''
+    This function is to calculate IoU between 2 boxes
+    bbox = [x1, y1, x2, y2]
+
+    '''
+    x_topleft_gt, y_topleft_gt, x_bottomright_gt, y_bottomright_gt = bbox1
+    x_topleft_p, y_topleft_p, x_bottomright_p, y_bottomright_p = bbox2
+
+    if (x_topleft_gt > x_bottomright_gt) or (y_topleft_gt > y_bottomright_gt):
+        raise AssertionError("Ground Truth Bounding Box is not correct")
+    if (x_topleft_p > x_bottomright_p) or (y_topleft_p > y_bottomright_p):
+        raise AssertionError("Predicted Bounding Box is not correct")
+
+    # If bbox1 and bbox2 do not overlap then IoU = 0
+    if(x_bottomright_gt < x_topleft_p):      
+        return 0.0
+    if(y_bottomright_gt < y_topleft_p):        
+        return 0.0
+    if(x_topleft_gt > x_bottomright_p):      
+        return 0.0
+    if(y_topleft_gt > y_bottomright_p):
+        return 0.0
+
+    bbox1_area = (x_bottomright_gt - x_topleft_gt + 1) * (y_bottomright_gt - y_topleft_gt + 1)
+    bbox2_area = (x_bottomright_p - x_topleft_p + 1 ) * (y_bottomright_p - y_topleft_p + 1)
+
+    x_top_left = np.max([x_topleft_gt, x_topleft_p])
+    y_top_left = np.max([y_topleft_gt, y_topleft_p])
+    x_bottom_right = np.min([x_bottomright_gt, x_bottomright_p])
+    y_bottom_right = np.min([y_bottomright_gt, y_bottomright_p])
+
+    intersection_area = (x_bottom_right - x_top_left + 1) * (y_bottom_right - y_top_left  + 1)
+    union_area = (bbox1_area + bbox2_area - intersection_area)
+
+    return intersection_area/union_area
+
 def weighted_coors(boxes):
     '''
     boxes = [x1, y1, x2, y2, score]
@@ -179,36 +218,55 @@ def weighted_coors(boxes):
     out_x2 = sum(boxes[:,2]*boxes[:,4])/sum_score
     out_y2 = sum(boxes[:,3]*boxes[:,4])/sum_score
 
-def wbb(dets, thresh):
-    boxes = dets
-    boxes = np.array(boxes)
-    wbbs = []
-
-    while len(boxes) > 0:
-        boxes = np.array(boxes)
-
-        scores = boxes[:,4]
-        order = scores.argsort()[::-1]
-
-        anchor = boxes[order[0]]
-        one_group = []
-        one_group.append(anchor)
-
-        new_boxes = []
-
-        for i in range(len(order)-1):
-            test_box = boxes[order[i+1]]
-            iou = calc_iou(anchor[0:4], test_box[0:4])
-            if iou >= thresh: one_group.append(test_box)
-            else: new_boxes.append(test_box)
-
-        boxes = new_boxes    
-        average_box = weighted_coors(one_group)
-        wbbs.append(average_box)
-
-    return wbbs
-    
     return [int(out_x1), int(out_y1), int(out_x2), int(out_y2), max_score]
+
+
+def wbb(all_boxes, thresh=0.5):
+    '''
+    This function is to apply Weighted Bounding Box
+    all_boxes: [[object_name, score, x1, y1, x2, y2], [],..., []]
+    '''
+    box_array = np.array(all_boxes)
+    classes_in_img = list(set(box_array[:,0]))
+
+    output_bboxes = []
+
+    for cls in classes_in_img:
+        cls_mask = (box_array[:,0] == cls)
+        cls_bboxes = box_array[cls_mask]
+
+        boxes = []
+        for box in cls_bboxes:
+            boxes.append([int(box[2]), int(box[3]), int(box[4]), int(box[5]), float(box[1])])
+
+        boxes = np.array(boxes)
+        wbbs = []
+
+        while len(boxes) > 0:
+            boxes = np.array(boxes)
+
+            scores = boxes[:,4]
+            order = scores.argsort()[::-1]
+
+            anchor = boxes[order[0]]
+            one_group = []
+            one_group.append(anchor)
+
+            new_boxes = []
+
+            for i in range(len(order)-1):
+                test_box = boxes[order[i+1]]
+                iou = calc_iou(anchor[0:4], test_box[0:4])
+                if iou >= thresh: one_group.append(test_box)
+                else: new_boxes.append(test_box)
+
+            boxes = new_boxes    
+            average_box = weighted_coors(one_group)
+            wbbs.append(average_box)
+
+        for box in wbbs: output_bboxes.append([cls, box[4], box[0], box[1], box[2], box[3]])
+
+    return output_bboxes
 
 
 def calc_iou(gt_bbox, pred_bbox):
