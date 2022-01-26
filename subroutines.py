@@ -14,7 +14,8 @@ from matplotlib import pyplot as plt
 ##################
 
 
-# 1. READ TXT FILE TO LIST
+
+# READ TXT FILE TO LIST
 def file_lines_to_list(path):
     # open txt file lines to a list
     with open(path) as f:
@@ -22,17 +23,18 @@ def file_lines_to_list(path):
     # remove whitespace characters like `\n` at the end of each line
     content = [(x.strip()).split() for x in content]
     return content
-# ------------------------
+# ------------------------------------------------------------------------------------------------
 
-# 2. GET FILE NAME FROM PATH
+
+# GET FILE NAME FROM PATH
 def get_file_name(path):
     basename = os.path.basename(path)
     onlyname = os.path.splitext(basename)[0]
     return onlyname
-# ------------------------
+# ------------------------------------------------------------------------------------------------
 
 
-# 4. CLUSTERING ACCURACY
+# CLUSTERING ACCURACY
 def clustering_acc(y_true, y_pred):
     """
     Calculate clustering accuracy. Require scikit-learn installed
@@ -52,10 +54,10 @@ def clustering_acc(y_true, y_pred):
         for infor in cm:
             true_cases += np.amax(infor)
     return true_cases / len(y_true)
-# ------------------------
+# ------------------------------------------------------------------------------------------------
 
 
-# 3. WRITE XML ANNOTATION FILE
+# WRITE XML ANNOTATION FILE
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
         """
@@ -87,9 +89,10 @@ def write_xml_anno(true_labels):
         f.write(prettify(annotation))
         
     return 0
-# ------------------------
+# ------------------------------------------------------------------------------------------------
 
-# 4. SOBEL EDGE CALCULATION
+
+# SOBEL EDGE CALCULATION
 def gaussian_kernel(size, sigma=1):
     size = int(size) // 2
     x, y = np.mgrid[-size:size+1, -size:size+1]
@@ -107,15 +110,10 @@ def edgeness(img):
     edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
     
     return edge
-# ------------------------
+# ------------------------------------------------------------------------------------------------
 
-# Write Text
-text_file = open("aug_data_names.txt", "w+")
-for i in range(len(sub_img_src)//4):
-    print(sub_img_names[4*i] + "_stack", file=text_file)
-text_file.close()
 
-# 5 Remove array from List
+# Remove array from List
 def remove_element(L,arr):
     ind = 0
     size = len(L)
@@ -125,9 +123,11 @@ def remove_element(L,arr):
         L.pop(ind)
     else:
         raise ValueError('array not found in list.')
+    return edge
+# ------------------------------------------------------------------------------------------------
+
 
 # 6 Non-maximum Suppression 
-import numpy as np
 def nms(dets, thresh):
     x1 = dets[:, 0]
     y1 = dets[:, 1]
@@ -156,19 +156,10 @@ def nms(dets, thresh):
         order = order[inds + 1]
 
     return keep
+# ------------------------------------------------------------------------------------------------
 
-# Copy-Paste File
-dst_dir = "./waymo/waymo_20per"
-i=0
-for name in waymo_20per_names:
-    filepath = f"../datasets/waymo/data/train/{name}.jpg"
-    shutil.copy(filepath, dst_dir)
-    i+=1
-    print(i, len(waymo_20per_names))
 
 # Weighted Bounding Box
-# Weighted Bounding Box
-
 def calc_iou(bbox1, bbox2):
     '''
     This function is to calculate IoU between 2 boxes
@@ -205,6 +196,7 @@ def calc_iou(bbox1, bbox2):
     union_area = (bbox1_area + bbox2_area - intersection_area)
 
     return intersection_area/union_area
+
 
 def weighted_coors(boxes):
     '''
@@ -267,6 +259,7 @@ def wbb(all_boxes, thresh=0.5):
         for box in wbbs: output_bboxes.append([cls, box[4], box[0], box[1], box[2], box[3]])
 
     return output_bboxes
+# ------------------------------------------------------------------------------------------------
 
 
 def calc_iou(gt_bbox, pred_bbox):
@@ -325,30 +318,12 @@ def process_single_image_results(gt_boxes, pred_boxes, iou_thr):
                     detected_obj_boxes.append(gt_box)
     
     return detected_obj_boxes
-
-
-def sobel_edges(img):  
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    x = cv2.Sobel(gray, cv2.CV_16S, 1,0, ksize=3, scale=1)
-    y = cv2.Sobel(gray, cv2.CV_16S, 0,1, ksize=3, scale=1)
-    absx= cv2.convertScaleAbs(x)
-    absy = cv2.convertScaleAbs(y)
-    edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
-    return edge
-
-def sobel_edges_gaublur(img, filter_size = (5,5)):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gau_img = cv2.GaussianBlur(gray,filter_size,0)
-    x = cv2.Sobel(gau_img, cv2.CV_16S, 1,0, ksize=3, scale=1)
-    y = cv2.Sobel(gau_img, cv2.CV_16S, 0,1, ksize=3, scale=1)
-    absx= cv2.convertScaleAbs(x)
-    absy = cv2.convertScaleAbs(y)
-    edge = cv2.addWeighted(absx, 0.5, absy, 0.5,0)
-    return edge
+# ------------------------------------------------------------------------------------------------
 
 
 # Display Plot Title
 plt.gca().set_title("image")
+# ------------------------------------------------------------------------------------------------
 
 
 # K-Means
@@ -356,14 +331,15 @@ from sklearn.cluster import KMeans
 kmeans = KMeans(n_clusters=6)
 kmeans.fit(box_sizes_array)
 print(kmeans.cluster_centers_)
-
+# ------------------------------------------------------------------------------------------------
 
 
 # WAYMO Size process:
     if img_name[name_len-10:name_len-6] == "SIDE" or img_name[name_len-9:name_len-5] == "SIDE": h = 886
     else: h = 1280
     w = 1920
-        
+# ------------------------------------------------------------------------------------------------
+
 
 # Post-process Segmentation
 def post_process(img):
@@ -381,17 +357,19 @@ def post_process(img):
     rgbArray[..., 2] = b_thr
     
     return rgbArray
+# ------------------------------------------------------------------------------------------------
 
 
-# Check a folder
+# Check if a folder exists
 if not os.path.isdir(detection_result_dir):
     os.makedirs(detection_result_dir)
+# ------------------------------------------------------------------------------------------------
 
     
 ### Sort Array
 array_x[array_x[:, 1].argsort()[::-1]]    # highest to lowest
 array_x[array_x[:, 1].argsort()]          # lowest to highest
-
+# ------------------------------------------------------------------------------------------------
 
 
 # 1-channel Image to 3-channel Image
@@ -402,3 +380,4 @@ img2 = np.zeros_like(img)
 img2[:,:,0] = gray
 img2[:,:,1] = gray
 img2[:,:,2] = gray
+# ------------------------------------------------------------------------------------------------
