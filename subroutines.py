@@ -261,6 +261,48 @@ def wbb(all_boxes, thresh=0.5):
     return output_bboxes
 # ------------------------------------------------------------------------------------------------
 
+# Weighted Bounding Box (Faster)
+def faster_wbb(all_boxes, thresh=0.5):
+    
+    box_array = np.array(all_boxes)
+    classes_in_img = list(set(box_array[:,5]))
+
+    # output_bboxes = []
+    wbbs = []
+
+    for cls in classes_in_img:
+        
+        cls_mask = (box_array[:,5] == cls)
+        boxes = box_array[cls_mask]
+        
+        while len(boxes) > 0:
+            
+            start_time_ = time.time()
+            
+            boxes = np.array(boxes)
+
+            scores = boxes[:,4]
+            order = scores.argsort()[::-1]
+
+            anchor = boxes[order[0]]
+            remaining = boxes[order[1:]]
+            
+            ious = bboxes_iou(anchor[0:4], remaining[:, :4])
+            selected = remaining[ious >= thresh]
+            one_group = np.concatenate(([anchor], selected), axis=0)
+                    
+            end_time_ = time.time()
+            print("--- Time: %s seconds ---" % (end_time_ - start_time_))
+
+            boxes = remaining[ious < thresh]
+            average_box = weighted_coors(one_group)
+            
+            wbbs.append([cls, average_box[4], average_box[0], average_box[1], average_box[2], average_box[3]])
+            
+    return wbbs
+# ------------------------------------------------------------------------------------------------
+
+
 
 def calc_iou(gt_bbox, pred_bbox):
     '''
