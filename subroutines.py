@@ -6,11 +6,11 @@
 
 ##### IMPORT #####
 import os
-import glob
 import cv2
-import numpy as np
+import glob
 import random
-from matplotlib import pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
 ##################
 
 
