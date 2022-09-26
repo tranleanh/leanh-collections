@@ -423,3 +423,8 @@ img2[:,:,0] = gray
 img2[:,:,1] = gray
 img2[:,:,2] = gray
 # ------------------------------------------------------------------------------------------------
+
+
+# PyPI Commands
+python setup.py sdist bdist_wheel
+twine upload dist/* 
