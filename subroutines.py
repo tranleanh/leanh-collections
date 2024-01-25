@@ -31,6 +31,12 @@ def get_file_name(path):
     basename = os.path.basename(path)
     onlyname = os.path.splitext(basename)[0]
     return onlyname
+
+
+# Method 2:
+head, tail = os.path.split(path)
+fname, ext = os.path.splitext(tail)
+print(head, fname, ext)
 # ------------------------------------------------------------------------------------------------
 
 
