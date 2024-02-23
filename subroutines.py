@@ -34,9 +34,10 @@ def get_file_name(path):
 
 
 # Method 2:
-head, tail = os.path.split(path)
-fname, ext = os.path.splitext(tail)
-print(head, fname, ext)
+def path_extractor(path):
+    head, tail = os.path.split(path)
+    fname, ext = os.path.splitext(tail)
+    return head, fname, ext
 # ------------------------------------------------------------------------------------------------
 
 
