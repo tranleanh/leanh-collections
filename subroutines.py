@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 ##################
 
 
-
+# ------------------------------------------------------------------------------------------------
 # READ TXT FILE TO LIST
 def file_lines_to_list(path):
     # open txt file lines to a list
@@ -29,12 +29,10 @@ def file_lines_to_list(path):
 # ------------------------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------------------------
 # GET FILE NAME FROM PATH
 def get_file_name(path):
-    basename = os.path.basename(path)
-    onlyname = os.path.splitext(basename)[0]
-    return onlyname
-
+    return os.path.splitext(os.path.basename(path))[0]
 
 # Method 2:
 def path_extractor(path):
